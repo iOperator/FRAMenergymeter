@@ -13,12 +13,25 @@
 
 void init(void);  // Initialization
 void init_uart(void);  // Setup the UART
+void init_rtc(void);  // Setup the Real-Time Clock
+void set_rtc();  // Set the RTC with values stored in rtc_* variables.
+
+// RTC values stored in BCD (see documentation)
+unsigned char rtc_sec = 0x0;  // Seconds = 0
+unsigned char rtc_min = 0x0;  // Minutes = 0
+unsigned char rtc_hour = (1 << 4) | 2;  // 12 o'clock
+unsigned char rtc_dow = 0x0;  // Sunday
+unsigned char rtc_day = 0x17;  // 17th day of month
+unsigned char rtc_mon = 0x3;  // Month march
+unsigned int rtc_year = 0x2013;  // Year 2013
 
 int main(void) {
     init();
     init_uart();
+    init_rtc();
+    set_rtc();
 	
-	return 0;
+	while(1);
 }
 
 void init(void) {
@@ -35,6 +48,8 @@ void init(void) {
 	 * P2.1  UCA0RXD
 	 * P3.7  LED 8
 	 * P3.6  LED 7
+	 * P3.5  LED 6
+	 * P3.4  LED 5
 	 * P4.0  Pushbutton S1 (input, pull-up)
 	 * P4.1  Pushbutton S2 (input, pull-up)
 	 * PJ.4  XIN
@@ -76,7 +91,7 @@ void init(void) {
 	CSCTL0 = CSKEY;  // Unlock register
 	CSCTL1 |= DCOFSEL0 + DCOFSEL1; // Set max. DCO setting
 	CSCTL2 = SELA_0 + SELS_3 + SELM_3; // Set ACLK = XT1; SMCLK = DCO; MCLK = DCO
-	CSCTL3 = DIVA_0 + DIVS_0 + DIVM_0; // Set all dividers
+	CSCTL3 = DIVA_0 + DIVS_0 + DIVM_0; // Set all dividers to '/1'
 
 	/* Wake up from LPM.5*/
 	PMMCTL0_H = PMMPW_H; // Unlock PMM control register
@@ -110,3 +125,25 @@ void init_uart(void) {
 	UCA0CTL1 &= ~UCSWRST;  // Release from reset
 }
 
+void init_rtc(void) {
+	/*
+	 * Setup the Real-Time Clock
+	 */
+	RTCCTL01 |= RTCBCD;  // Select BCD (Binary coded decimal)
+	RTCCTL01 &= ~RTCHOLD;  // Real-time clock is operational
+}
+
+void set_rtc(void){
+	/*
+	 * Set the RTC with values stored in rtc_* variables.
+	 */
+	while (RTCCTL01 & RTCRDY);  // Wait until RTC is getting updated.
+	while (!(RTCCTL01 & RTCRDY));  // Trap it until the update finish.
+	RTCSEC = rtc_sec;
+	RTCMIN = rtc_min;
+	RTCHOUR = rtc_hour;
+	RTCDOW = rtc_dow;
+	RTCDAY = rtc_day;
+	RTCMON = rtc_mon;
+	RTCYEAR = rtc_year;
+}
