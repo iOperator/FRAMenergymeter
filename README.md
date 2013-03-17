@@ -10,6 +10,6 @@ https://github.com/iOperator/FRAMenergymeter
 Files & Folders
 ---------------
 
-doc                     Documentation
-firmware/basestation    Software for the TI MSP-EXP430FR5739 development board
+doc                     Documentation  
+firmware/basestation    Software for the TI MSP-EXP430FR5739 development board  
 README.md               This file
