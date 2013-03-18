@@ -25,7 +25,7 @@ int main(void) {
 		// TESTING ONLY
 		if (!(P4IN & BIT0)) {
 			P3OUT &= ~(BIT7 + BIT6 + BIT5 + BIT4);
-			current_impulse += 1;
+			save_impulse();
 		} else {
 			P3OUT |= BIT7 + BIT6 + BIT5 + BIT4;
 		}

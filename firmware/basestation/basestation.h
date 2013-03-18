@@ -27,5 +27,7 @@ void set_rtc(void);  // Set the RTC with values stored in global rtc_* variables
 
 void clear_impulse_data(void);  // Clears the impulse data memory section
 
+int save_impulse(void);  // Save a impulse with current time and date
+
 
 #endif /* BASESTATION_H_ */

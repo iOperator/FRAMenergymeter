@@ -14,24 +14,24 @@
 /* Globals and defines */
 
 /* RTC values are stored as Binary Coded Decimals (BCD) (see documentation) */
-unsigned char rtc_sec = 0x0;  // Seconds = 0
-unsigned char rtc_min = 0x0;  // Minutes = 0
-unsigned char rtc_hour = 0x12;  // 12 o'clock
-unsigned char rtc_dow = 0x0;  // Sunday
-unsigned char rtc_day = 0x17;  // 17th day of month
-unsigned char rtc_mon = 0x3;  // Month march
 unsigned int rtc_year = 0x2013;  // Year 2013
+unsigned char rtc_mon = 0x3;  // Month march
+unsigned char rtc_day = 0x17;  // 17th day of month
+unsigned char rtc_dow = 0x0;  // Sunday
+unsigned char rtc_hour = 0x12;  // 12 o'clock
+unsigned char rtc_min = 0x0;  // Minutes = 0
+unsigned char rtc_sec = 0x0;  // Seconds = 0
 
 #define IMPULSE_SIZE 1000  // Allocate memory for this many impulses
 
 typedef struct{
-	unsigned char sec;
-	unsigned char min;
-	unsigned char hour;
-	unsigned char dow;
-	unsigned char day;
-	unsigned char mon;
 	unsigned int year;
+	unsigned char mon;
+	unsigned char day;
+	unsigned char dow;
+	unsigned char hour;
+	unsigned char min;
+	unsigned char sec;
 } impulseStruct;
 
 #pragma DATA_SECTION(impulseData, ".fram_vars")
@@ -154,15 +154,17 @@ void set_rtc(void){
 	/*
 	 * Set the RTC with values stored in global rtc_* variables
 	 */
-	while (RTCCTL01 & RTCRDY);  // Wait until RTC is getting updated.
-	while (!(RTCCTL01 & RTCRDY));  // Trap it until the update finish.
-	RTCSEC = rtc_sec;
-	RTCMIN = rtc_min;
-	RTCHOUR = rtc_hour;
-	RTCDOW = rtc_dow;
-	RTCDAY = rtc_day;
-	RTCMON = rtc_mon;
+	// while (RTCCTL01 & RTCRDY);  // Wait until RTC is getting updated.
+	// while (!(RTCCTL01 & RTCRDY));  // Trap it until the update finish.
+	RTCCTL01 |= RTCHOLD;
 	RTCYEAR = rtc_year;
+	RTCMON = rtc_mon;
+	RTCDAY = rtc_day;
+	RTCDOW = rtc_dow;
+	RTCHOUR = rtc_hour;
+	RTCMIN = rtc_min;
+	RTCSEC = rtc_sec;
+	RTCCTL01 &= ~RTCHOLD;
 }
 
 
@@ -172,13 +174,35 @@ void clear_impulse_data(void) {
 	 */
 	unsigned int i;
 	for (i = 0; i < IMPULSE_SIZE; ++i) {
-		impulseData[i].sec = 0x0;
-		impulseData[i].min = 0x0;
-		impulseData[i].hour = 0x0;
-		impulseData[i].dow = 0x0;
-		impulseData[i].day = 0x0;
-		impulseData[i].mon = 0x0;
 		impulseData[i].year = 0x0;
+		impulseData[i].mon = 0x0;
+		impulseData[i].day = 0x0;
+		impulseData[i].dow = 0x0;
+		impulseData[i].hour = 0x0;
+		impulseData[i].min = 0x0;
+		impulseData[i].sec = 0x0;
 	}
 	current_impulse = 0;
+}
+
+int save_impulse(void) {
+	/*
+	 * Save a impulse with current time and date
+	 */
+	if (current_impulse < IMPULSE_SIZE) {
+		while (RTCCTL01 & RTCRDY);  // Wait until RTC is getting updated.
+		while (!(RTCCTL01 & RTCRDY));  // Trap it until the update finish.
+		impulseData[current_impulse].year = RTCYEAR;
+		impulseData[current_impulse].mon = RTCMON;
+		impulseData[current_impulse].day = RTCDAY;
+		impulseData[current_impulse].dow = RTCDOW;
+		impulseData[current_impulse].hour = RTCHOUR;
+		impulseData[current_impulse].min = RTCMIN;
+		impulseData[current_impulse].sec = RTCSEC;
+		current_impulse++;
+		return 0;
+	} else {
+		/* No more free space to store the impulse */
+		return -1;
+	}
 }
