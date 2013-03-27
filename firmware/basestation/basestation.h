@@ -12,6 +12,19 @@
 #ifndef BASESTATION_H_
 #define BASESTATION_H_
 
+/* Types */
+typedef struct{
+	unsigned int year;
+	unsigned char mon;
+	unsigned char day;
+	unsigned char dow;
+	unsigned char hour;
+	unsigned char min;
+	unsigned char sec;
+} impulseStruct;
+
+typedef enum {uart, cc2500} transmit_modes;
+
 /* Globals */
 extern unsigned int current_impulse;
 
@@ -28,6 +41,8 @@ void set_rtc(void);  // Set the RTC with values stored in global rtc_* variables
 void clear_impulse_data(void);  // Clears the impulse data memory section
 
 int save_impulse(void);  // Save a impulse with current time and date
+
+void send_impulses(transmit_modes tx_mode);  // Send all saved impulses via the given transmit mode
 
 
 #endif /* BASESTATION_H_ */

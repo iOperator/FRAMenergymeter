@@ -21,6 +21,8 @@ int main(void) {
 	
     _enable_interrupts();
 
+    clear_impulse_data();  // TESTING ONLY
+
 	while(1) {
 		// TESTING ONLY
 		if (!(P4IN & BIT0)) {
@@ -30,7 +32,8 @@ int main(void) {
 			P3OUT |= BIT7 + BIT6 + BIT5 + BIT4;
 		}
 		if (!(P4IN & BIT1)) {
-			clear_impulse_data();
+//			clear_impulse_data();
+			send_impulses(uart);
 		}
 	}
 }

@@ -10,6 +10,7 @@
  */
 
 #include <msp430.h>
+#include "basestation.h"
 
 /* Globals and defines */
 
@@ -23,16 +24,6 @@ unsigned char rtc_min = 0x0;  // Minutes = 0
 unsigned char rtc_sec = 0x0;  // Seconds = 0
 
 #define IMPULSE_SIZE 1000  // Allocate memory for this many impulses
-
-typedef struct{
-	unsigned int year;
-	unsigned char mon;
-	unsigned char day;
-	unsigned char dow;
-	unsigned char hour;
-	unsigned char min;
-	unsigned char sec;
-} impulseStruct;
 
 #pragma DATA_SECTION(impulseData, ".fram_vars")
 //#pragma NOINIT(impulseData)
@@ -150,7 +141,7 @@ void init_rtc(void) {
 }
 
 
-void set_rtc(void){
+void set_rtc(void) {
 	/*
 	 * Set the RTC with values stored in global rtc_* variables
 	 */
@@ -204,5 +195,50 @@ int save_impulse(void) {
 	} else {
 		/* No more free space to store the impulse */
 		return -1;
+	}
+}
+
+void send_impulses(transmit_modes tx_mode) {
+	/*
+	 * Send all saved impulses via the given transmit mode
+	 */
+	if (tx_mode == uart) {
+		unsigned int i;
+		for (i = 0; i < current_impulse; i++) {
+			while (UCBUSY & UCA0STATW) {};  // Wait while UART is busy
+			UCA0TXBUF = ((impulseData[i].year >> 12) & 0xf) + 0x30;  // Send BCD as ASCII
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].year >> 8) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].year >> 4) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].year) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].mon >> 4) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].mon) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].day >> 4) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].day) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].dow >> 4) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].dow) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].hour >> 4) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].hour) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].min >> 4) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].min) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].sec >> 4) & 0xf) + 0x30;
+			while (UCBUSY & UCA0STATW) {};
+			UCA0TXBUF = ((impulseData[i].sec) & 0xf) + 0x30;
+		}
+	} else if (tx_mode == cc2500) {
+		/* TBD */
 	}
 }
