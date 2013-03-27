@@ -22,6 +22,7 @@ int main(void) {
     _enable_interrupts();
 
     clear_impulse_data();  // TESTING ONLY
+    myputs("FRAMenergymeter\r\nMax Groening, 2013\r\nFirmware " FWVERSION "\r\n");
 
 	while(1) {
 		// TESTING ONLY

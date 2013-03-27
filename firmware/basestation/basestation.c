@@ -10,9 +10,8 @@
  */
 
 #include <msp430.h>
+#include <stdio.h>
 #include "basestation.h"
-
-/* Globals and defines */
 
 /* RTC values are stored as Binary Coded Decimals (BCD) (see documentation) */
 unsigned int rtc_year = 0x2013;  // Year 2013
@@ -22,8 +21,6 @@ unsigned char rtc_dow = 0x0;  // Sunday
 unsigned char rtc_hour = 0x12;  // 12 o'clock
 unsigned char rtc_min = 0x0;  // Minutes = 0
 unsigned char rtc_sec = 0x0;  // Seconds = 0
-
-#define IMPULSE_SIZE 1000  // Allocate memory for this many impulses
 
 #pragma DATA_SECTION(impulseData, ".fram_vars")
 //#pragma NOINIT(impulseData)
@@ -240,5 +237,46 @@ void send_impulses(transmit_modes tx_mode) {
 		}
 	} else if (tx_mode == cc2500) {
 		/* TBD */
+	}
+}
+
+int myprintf(const char *fmt, ...) {
+	/*
+	 * Simple printf replacement
+	 */
+    char buf[256], *p;
+    va_list args;
+    int n=0;
+
+    va_start(args, fmt);
+    vsprintf(buf, fmt, args);
+    va_end(args);
+    p=buf;
+    while (*p) {
+    	while (UCBUSY & UCA0STATW) {};
+    	UCA0TXBUF = *p;
+        n++;
+        p++;
+    }
+    return n;
+}
+
+void myputc(unsigned b) {
+	/*
+	 * Simple putc replacement
+	 */
+	while (UCBUSY & UCA0STATW) {};  // Wait while UART is busy
+	UCA0TXBUF = b;
+}
+
+void myputs(char *s) {
+	/*
+	 * Simple puts replacement
+	 */
+	char c;
+	// Loop through each character in string 's'
+	while (c = *s++) {
+		while (UCBUSY & UCA0STATW) {};  // Wait while UART is busy
+		UCA0TXBUF = c;
 	}
 }
