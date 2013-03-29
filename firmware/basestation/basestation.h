@@ -51,5 +51,13 @@ int save_impulse(void);  // Save a impulse with current time and date
 
 void send_impulses(transmit_modes tx_mode);  // Send all saved impulses via the given transmit mode
 
+unsigned int measure_battery(void);  // Measures the battery voltage and returns it
+
+void bcd_to_ascii_8(unsigned char bcd, char *ascii);  // Converts a BCD byte to ASCII
+
+void bcd_to_ascii_16(unsigned char bcd, char *ascii);  // Converts a BCD word to ASCII
+
+void int_to_ascii();  // Converts an integer into ASCII
+
 
 #endif /* BASESTATION_H_ */

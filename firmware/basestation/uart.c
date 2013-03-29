@@ -95,14 +95,70 @@ void uart_info(void) {
 	/*
 	 * Send info via UART
 	 */
+	char numbuffer[5];  // Buffer for integer to ASCII conversions
 	myputs("\r\n");
 	myputs("FRAMenergymeter\r\n===============\r\nMax Groening, 2013\r\nFirmware " FWVERSION "\r\n");
 	uart_line();
 	myputs("Sensor(s), type, impulses/unit:\r\n");
-	myprintf("Memory: %d of %d used. (%d%%)\r\n", current_impulse, IMPULSE_SIZE, (current_impulse * 100 / IMPULSE_SIZE));
-	// myputs("Memory: "  " of " " free.\r\n");
-	myputs("RTC time:\r\n");
-	myputs("RTC date:\r\n");
+
+//	myprintf("Memory: %d of %d used. (%d%%)\r\n", current_impulse, IMPULSE_SIZE, (current_impulse * 100 / IMPULSE_SIZE));  // Warning: printf uses lot of memory
+	myputs("Memory: ");
+	int_to_ascii(current_impulse, &numbuffer);
+	myputs(numbuffer);
+	myputs(" of ");
+	int_to_ascii(IMPULSE_SIZE, &numbuffer);
+	myputs(numbuffer);
+	myputs(" used. (");
+	int_to_ascii((current_impulse * 100 / IMPULSE_SIZE), &numbuffer);
+	myputs(numbuffer);
+	myputs("%)\r\n");
+
+	char timedate[11];
+	while (!(RTCCTL01 & RTCRDY));  // Trap RTC until the update finish.
+//	bcd_to_ascii_8(RTCHOUR, &timedate[0]);
+//	timedate[2] = ':';
+//	bcd_to_ascii_8(RTCMIN, &timedate[3]);
+//	timedate[5] = ':';
+//	bcd_to_ascii_8(RTCSEC, &timedate[6]);
+	timedate[0] = '0' + (RTCHOUR >> 4);
+	timedate[1] = '0' + (RTCHOUR & 0xf);
+	timedate[2] = ':';
+	timedate[3] = '0' + (RTCMIN >> 4);
+	timedate[4] = '0' + (RTCMIN & 0xf);
+	timedate[5] = ':';
+	timedate[6] = '0' + (RTCSEC >> 4);
+	timedate[7] = '0' + (RTCSEC & 0xf);
+	timedate[8] = '\0';
+	myputs("RTC time: ");
+	myputs(timedate);
+	myputs("\r\n");
+
+	while (!(RTCCTL01 & RTCRDY));  // Trap RTC until the update finish.
+//	bcd_to_ascii_16(RTCYEAR, &timedate[0]);
+//	timedate[4] = ':';
+//	bcd_to_ascii_8(RTCMON, &timedate[5]);
+//	timedate[7] = ':';
+//	bcd_to_ascii_8(RTCDAY, &timedate[8]);
+	timedate[0] = '0' + ((RTCYEAR >> 12) & 0xf);
+	timedate[1] = '0' + ((RTCYEAR >> 8) & 0xf);
+	timedate[2] = '0' + ((RTCYEAR >> 4) & 0xf);
+	timedate[3] = '0' + (RTCYEAR & 0xf);
+	timedate[4] = ':';
+	timedate[5] = '0' + (RTCMON >> 4);
+	timedate[6] = '0' + (RTCMON & 0xf);
+	timedate[7] = ':';
+	timedate[8] = '0' + (RTCDAY >> 4);
+	timedate[9] = '0' + (RTCDAY & 0xf);
+	timedate[10] = '\0';
+	myputs("RTC date: ");
+	myputs(timedate);
+	myputs("\r\n");
+
+//	myprintf("Battery: %d mV\r\n", measure_battery());  // Warning: printf uses lot of memory
+	myputs("Battery: ");
+	int_to_ascii(measure_battery(), &numbuffer);
+	myputs(numbuffer);
+	myputs(" mV\r\n");
 	uart_line();
 }
 
@@ -123,7 +179,13 @@ void uart_send(void) {
 	/*
 	 * Send stored impulses
 	 */
-	myprintf("Sending %d impulse(s):\r\n", current_impulse);
+	char numbuffer[5];  // Buffer for integer to ASCII conversions
+//	myprintf("Sending %d impulse(s):\r\n", current_impulse);  // Warning: printf uses lot of memory
+	myputs("Sending ");
+	int_to_ascii(current_impulse, &numbuffer);
+	myputs(numbuffer);
+	myputs(" impulse(s):\r\n");
+
 	uart_line();
 	send_impulses(uart);
 	uart_line();
@@ -156,7 +218,7 @@ void uart_setup(void) {
 
 void uart_error(void) {
 	/*
-	 * No valid command recieved
+	 * No valid command received
 	 */
 	myputs("\r\nInvalid command. Type 'help' for a list of valid commands.\r\n");
 }

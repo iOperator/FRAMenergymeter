@@ -68,10 +68,14 @@ int main(void) {
 				uart_clear_buffer();
 				uart_setup();
 				uart_promt();
+			} else if (uart_rx_buffer[0] == '\x77' && uart_rx_buffer[1] == '\x68' && uart_rx_buffer[2] == '\x79') {
+				uart_clear_buffer();
+				myputs("\x62\x65\x63\x61\x75\x73\x65\x21");
+				uart_promt();
 			} else if (uart_rx_buffer[0] == '\n' || uart_rx_buffer[0] == '\r') { // Nothing entered, just enter key
 				uart_clear_buffer();
 				uart_promt();
-			} else {
+			} else {  // Invalid command entered
 				uart_clear_buffer();
 				uart_error();
 				uart_promt();

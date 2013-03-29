@@ -56,6 +56,6 @@ void uart_clear(void);  // Clear stored impulses
 
 void uart_setup(void);  // Run configuration dialog
 
-void uart_error(void);  // No valid command recieved
+void uart_error(void);  // No valid command received
 
 #endif /* UART_H_ */

@@ -74,7 +74,7 @@ void init(void) {
 	P2OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output low or pulled down
 	P2DIR |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output direction
 	P2SEL1 |= (BIT0 + BIT1);  // Select UCA0TXD and UCA0RDX
-	P2SEL0 &= (BIT0 + BIT1);  //
+	P2SEL0 &= ~(BIT0 + BIT1);  //
 
 	/* Port 3 */
 	P3OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output low or pulled down
@@ -219,25 +219,91 @@ void send_impulses(transmit_modes tx_mode) {
 	if (tx_mode == uart) {
 		unsigned int i;
 		for (i = 0; i < current_impulse; i++) {
-			myputc(((impulseData[i].year >> 12) & 0xf) + 0x30);  // Send BCD as ASCII
+			myputc((impulseData[i].year >> 12) + 0x30);  // Send BCD as ASCII
 			myputc(((impulseData[i].year >> 8) & 0xf) + 0x30);
 			myputc(((impulseData[i].year >> 4) & 0xf) + 0x30);
-			myputc(((impulseData[i].year) & 0xf) + 0x30);
-			myputc(((impulseData[i].mon >> 4) & 0xf) + 0x30);
-			myputc(((impulseData[i].mon) & 0xf) + 0x30);
-			myputc(((impulseData[i].day >> 4) & 0xf) + 0x30);
-			myputc(((impulseData[i].day) & 0xf) + 0x30);
-			myputc(((impulseData[i].dow >> 4) & 0xf) + 0x30);
-			myputc(((impulseData[i].dow) & 0xf) + 0x30);
-			myputc(((impulseData[i].hour >> 4) & 0xf) + 0x30);
-			myputc(((impulseData[i].hour) & 0xf) + 0x30);
-			myputc(((impulseData[i].min >> 4) & 0xf) + 0x30);
-			myputc(((impulseData[i].min) & 0xf) + 0x30);
-			myputc(((impulseData[i].sec >> 4) & 0xf) + 0x30);
-			myputc(((impulseData[i].sec) & 0xf) + 0x30);
+			myputc((impulseData[i].year & 0xf) + 0x30);
+			myputc((impulseData[i].mon >> 4) + 0x30);
+			myputc((impulseData[i].mon & 0xf) + 0x30);
+			myputc((impulseData[i].day >> 4) + 0x30);
+			myputc((impulseData[i].day & 0xf) + 0x30);
+			myputc((impulseData[i].dow >> 4) + 0x30);
+			myputc((impulseData[i].dow & 0xf) + 0x30);
+			myputc((impulseData[i].hour >> 4) + 0x30);
+			myputc((impulseData[i].hour & 0xf) + 0x30);
+			myputc((impulseData[i].min >> 4) + 0x30);
+			myputc((impulseData[i].min & 0xf) + 0x30);
+			myputc((impulseData[i].sec >> 4) + 0x30);
+			myputc((impulseData[i].sec & 0xf) + 0x30);
 			myputs("\r\n");
 		}
 	} else if (tx_mode == cc2500) {
 		/* TBD */
 	}
+}
+
+unsigned int measure_battery(void) {
+	/*
+	 * Measures the battery voltage and returns it
+	 */
+	unsigned long result;
+	/* ADC setup */
+	ADC10CTL0 = ADC10SHT_2 + ADC10ON;  // 16 ADC cycles, ADC on
+	ADC10CTL1 = ADC10SHP;  // SAMPCON from sampling timer, single-channel, single-conversion
+	ADC10MCTL0 = ADC10SREF_1 + ADC10INCH_11;  // VREF to AVSS, Input channel = (AVCC-AVSS) / 2
+	/* Setup voltage reference */
+	while(REFCTL0 & REFGENBUSY);  // Trap if reference is busy
+	REFCTL0 |= REFVSEL_2 + REFON;  // 1.5 V, Reference enabled
+	__delay_cycles(400);  // Wait for reference to settle
+	/* ADC sample */
+	ADC10CTL0 |= ADC10ENC + ADC10SC;  // Enable and start conversion
+	while (ADC10CTL1 & ADC10BUSY);  // Wait while ADC is busy
+	result = (ADC10MEM0 * 5000l);
+	/* Disable ADC and reference */
+	ADC10CTL0 &= ~ADC10ENC;
+	ADC10CTL0 &= ~ADC10ON;
+	while(REFCTL0 & REFGENBUSY);
+	REFCTL0 &= ~REFON;
+
+	return ((unsigned int)(result / 1024l));
+}
+
+void bcd_to_ascii_8(unsigned char bcd, char *ascii) {
+	/*
+	 * Converts a BCD byte to ASCII
+	 */
+	*ascii++ = (bcd >> 4) + '0';
+	*ascii++ = (bcd & 0x0f) + '0';
+	*ascii = '\0';
+}
+
+void bcd_to_ascii_16(unsigned char bcd, char *ascii) {
+	/*
+	 * Converts a BCD word to ASCII
+	 */
+	*ascii++ = (bcd >> 12) + '0';
+	*ascii++ = ((bcd >> 8) & 0x0f) + '0';
+	*ascii++ = ((bcd >> 4) & 0x0f) + '0';
+	*ascii++ = (bcd & 0x0f) + '0';
+	*ascii = '\0';
+}
+
+void int_to_ascii(int num, char *ascii) {
+	/*
+	 * Converts an integer into ASCII
+	 */
+	unsigned int i = 0;
+	unsigned int j;
+	do {
+		ascii[i++] = '0' + num % 10;
+		num /= 10;
+	} while (num > 0);
+	/* Mirror the string */
+	char tmp;
+	for (j = 0; j < i / 2; ++j) {
+		tmp = ascii[j];
+		ascii[j] = ascii[i-j-1];
+		ascii[i-j-1] = tmp;
+	}
+	ascii[i] = '\0';
 }
