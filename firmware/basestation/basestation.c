@@ -10,8 +10,8 @@
  */
 
 #include <msp430.h>
-#include <stdio.h>
 #include "basestation.h"
+#include "uart.h"
 
 /* RTC values are stored as Binary Coded Decimals (BCD) (see documentation) */
 unsigned int rtc_year = 0x2013;  // Year 2013
@@ -30,7 +30,7 @@ impulseStruct impulseData[IMPULSE_SIZE];
 #pragma DATA_SECTION(current_impulse, ".fram_vars")
 //#pragma NOINIT(current_impulse)
 //#pragma PERSISTENT(current_impulse)
-unsigned int current_impulse;
+unsigned int current_impulse = 0x0;
 
 volatile unsigned char flag_sensor = 0x0;
 volatile unsigned char flag_rx = 0x0;
@@ -62,8 +62,10 @@ void init(void) {
 	 */
 
 	/* Port 1 */
-	P1OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output low or pulled down
+	P1OUT &= ~(BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output low or pulldown
+	P1OUT |= BIT0;  // Output high or pullup
 	P1DIR |= (BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output direction
+	P1REN |= BIT0;  // Enable pullup/pulldown resistors
 	P1IES |= BIT0;  // Set interrupt flag on high-to-low transition
 	P1IE |= BIT0;  // Enable interrupt
 	P1IFG = 0;  // Clear P1 interrupt flags
@@ -72,6 +74,7 @@ void init(void) {
 	P2OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output low or pulled down
 	P2DIR |= (BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output direction
 	P2SEL1 |= (BIT0 + BIT1);  // Select UCA0TXD and UCA0RDX
+	P2SEL0 &= (BIT0 + BIT1);  //
 
 	/* Port 3 */
 	P3OUT &= ~(BIT0 + BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output low or pulled down
@@ -122,10 +125,24 @@ void init_uart(void) {
 	 */
 	UCA0CTL1 |= UCSWRST;  // eUSCI reset state
 	UCA0CTL1 = UCSSEL_1;  // Set ACLK = 32768 as UCBRCLK
-	UCA0BR0 = 3;  // Set prescaler of BRG for 9600 Baud
-	UCA0MCTLW |= 0x9200;  // 32768/9600 - INT(32768/9600)=0.41
-	UCA0BR1 = 0;  // UCBRSx value = 0x92 (See UG)
+	UCA0BRW = 3;  // Set prescaler of BRC for 9600 Baud
+	UCA0MCTLW = 0x9200;  // 32768/9600 - INT(32768/9600)=0.41 => UCBRSx = 0x92
 	UCA0CTL1 &= ~UCSWRST;  // Release from reset
+	UCA0IE |= UCRXIE;  // Enable RX interrupt
+
+//	UCA0CTL1 |= UCSWRST;  // eUSCI reset state
+//	UCA0CTL1 = UCSSEL_2;  // Set SMCLK = 8000000 as UCBRCLK
+//	UCA0BRW = 52;  // Set prescaler of BRG for 9600 Baud
+//	UCA0MCTLW = 0x4900 + 0x10 + UCOS16;  // 8000000/9600 - INT(8000000/9600)=0.333
+//	UCA0CTL1 &= ~UCSWRST;  // Release from reset
+//	UCA0IE |= UCRXIE;  // Enable RX interrupt
+
+//	UCA0CTL1 |= UCSWRST;  // eUSCI reset state
+//	UCA0CTL1 = UCSSEL_1;  // Set ACLK = 32768 as UCBRCLK
+//	UCA0BRW = 1;  // Set prescaler of BRC for 1200 Baud
+//	UCA0MCTLW = 0x2500 + 0xB0 + UCOS16;  // 32768/1200 - INT(32768/1200)=0.306 => UCBRSx = 0x25
+//	UCA0CTL1 &= ~UCSWRST;  // Release from reset
+//	UCA0IE |= UCRXIE;  // Enable RX interrupt
 }
 
 
@@ -202,81 +219,25 @@ void send_impulses(transmit_modes tx_mode) {
 	if (tx_mode == uart) {
 		unsigned int i;
 		for (i = 0; i < current_impulse; i++) {
-			while (UCBUSY & UCA0STATW) {};  // Wait while UART is busy
-			UCA0TXBUF = ((impulseData[i].year >> 12) & 0xf) + 0x30;  // Send BCD as ASCII
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].year >> 8) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].year >> 4) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].year) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].mon >> 4) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].mon) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].day >> 4) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].day) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].dow >> 4) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].dow) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].hour >> 4) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].hour) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].min >> 4) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].min) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].sec >> 4) & 0xf) + 0x30;
-			while (UCBUSY & UCA0STATW) {};
-			UCA0TXBUF = ((impulseData[i].sec) & 0xf) + 0x30;
+			myputc(((impulseData[i].year >> 12) & 0xf) + 0x30);  // Send BCD as ASCII
+			myputc(((impulseData[i].year >> 8) & 0xf) + 0x30);
+			myputc(((impulseData[i].year >> 4) & 0xf) + 0x30);
+			myputc(((impulseData[i].year) & 0xf) + 0x30);
+			myputc(((impulseData[i].mon >> 4) & 0xf) + 0x30);
+			myputc(((impulseData[i].mon) & 0xf) + 0x30);
+			myputc(((impulseData[i].day >> 4) & 0xf) + 0x30);
+			myputc(((impulseData[i].day) & 0xf) + 0x30);
+			myputc(((impulseData[i].dow >> 4) & 0xf) + 0x30);
+			myputc(((impulseData[i].dow) & 0xf) + 0x30);
+			myputc(((impulseData[i].hour >> 4) & 0xf) + 0x30);
+			myputc(((impulseData[i].hour) & 0xf) + 0x30);
+			myputc(((impulseData[i].min >> 4) & 0xf) + 0x30);
+			myputc(((impulseData[i].min) & 0xf) + 0x30);
+			myputc(((impulseData[i].sec >> 4) & 0xf) + 0x30);
+			myputc(((impulseData[i].sec) & 0xf) + 0x30);
+			myputs("\r\n");
 		}
 	} else if (tx_mode == cc2500) {
 		/* TBD */
-	}
-}
-
-int myprintf(const char *fmt, ...) {
-	/*
-	 * Simple printf replacement
-	 */
-    char buf[256], *p;
-    va_list args;
-    int n=0;
-
-    va_start(args, fmt);
-    vsprintf(buf, fmt, args);
-    va_end(args);
-    p=buf;
-    while (*p) {
-    	while (UCBUSY & UCA0STATW) {};
-    	UCA0TXBUF = *p;
-        n++;
-        p++;
-    }
-    return n;
-}
-
-void myputc(unsigned b) {
-	/*
-	 * Simple putc replacement
-	 */
-	while (UCBUSY & UCA0STATW) {};  // Wait while UART is busy
-	UCA0TXBUF = b;
-}
-
-void myputs(char *s) {
-	/*
-	 * Simple puts replacement
-	 */
-	char c;
-	// Loop through each character in string 's'
-	while (c = *s++) {
-		while (UCBUSY & UCA0STATW) {};  // Wait while UART is busy
-		UCA0TXBUF = c;
 	}
 }

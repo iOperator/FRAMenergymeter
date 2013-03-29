@@ -26,7 +26,8 @@ MEMORY
     RAM                     : origin = 0x1C00, length = 0x0400
     INFOA                   : origin = 0x1880, length = 0x0080
     INFOB                   : origin = 0x1800, length = 0x0080
-    FRAM                    : origin = 0xC200, length = 0x3D80
+    FRAM                    : origin = 0xC200, length = 0x1200 // original: 0xC200, 0x3D80
+    FRAMni                  : origin = 0xD400, length = 0x2B80
     SIGNATURE               : origin = 0xFF88, length = 0x0008
     INT00                   : origin = 0xFF90, length = 0x0002
     INT01                   : origin = 0xFF92, length = 0x0002
@@ -116,7 +117,7 @@ SECTIONS
        }
     } > FRAM
 
-    .fram_vars  : {} > FRAM type = NOINIT   /* STORES RECORDED IMPULSE DATA      */
+    .fram_vars  : {} > FRAMni type = NOINIT   /* STORES RECORDED IMPULSE DATA      */
 
     .bss        : {} > RAM                /* GLOBAL & STATIC VARS              */
     .data       : {} > RAM                /* GLOBAL & STATIC VARS              */

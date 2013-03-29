@@ -13,11 +13,13 @@
 #define BASESTATION_H_
 
 /* Defines */
+
 #define FWVERSION "v0.0.1"
 #define IMPULSE_SIZE 1000  // Allocate memory for this many impulses
 
 /* Types */
-typedef struct{
+
+typedef struct {
 	unsigned int year;
 	unsigned char mon;
 	unsigned char day;
@@ -30,6 +32,7 @@ typedef struct{
 typedef enum {uart, cc2500} transmit_modes;
 
 /* Globals */
+
 extern unsigned int current_impulse;
 
 /* Functions */
@@ -47,12 +50,6 @@ void clear_impulse_data(void);  // Clears the impulse data memory section
 int save_impulse(void);  // Save a impulse with current time and date
 
 void send_impulses(transmit_modes tx_mode);  // Send all saved impulses via the given transmit mode
-
-int myprintf(const char *fmt, ...);  // Simple printf replacement
-
-void myputc(unsigned b);  // Simple putc replacement
-
-void myputs(char *s);  // Simple puts replacement
 
 
 #endif /* BASESTATION_H_ */
