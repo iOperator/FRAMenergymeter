@@ -22,7 +22,8 @@
 typedef struct {
 	unsigned command:1;  // 'Enter' key received
 	unsigned echo:1;  // Echo received chars
-	unsigned promt:1;  // Show promt
+	unsigned prompt:1;  // Show prompt
+	unsigned sleep:1;  // Sleep mode
 } uartFlagsStruct;
 
 /* Globals */
@@ -30,7 +31,7 @@ typedef struct {
 extern char uart_rx_buffer[RX_BUFFER_SIZE];
 extern unsigned int uart_rx_buffer_p;
 extern char uart_rx_char;  // Stores last received char for comparison and echo
-extern uartFlagsStruct uartFlags;  // Stores command, echo, and promt flags
+extern uartFlagsStruct uartFlags;  // Stores command, echo, prompt, and sleep flags
 
 /* Functions */
 
@@ -42,7 +43,7 @@ void myputs(char *s);  // Simple puts replacement
 
 void uart_clear_buffer(void);  // Clears UART command buffer and resets buffer pointer
 
-void uart_promt(void);  // Send UART promt
+void uart_prompt(void);  // Send UART prompt
 
 void uart_line(void);  // Print a line of dashes
 

@@ -19,7 +19,7 @@
 char uart_rx_buffer[RX_BUFFER_SIZE];  // Stores received commands
 unsigned int uart_rx_buffer_p = 0x0;  // Pointer variable for uart_rx_buffer
 char uart_rx_char;  // Stores last received char for comparison and echo
-uartFlagsStruct uartFlags;  // Stores command, echo, and promt flags
+uartFlagsStruct uartFlags;  // Stores command, echo, prompt, and sleep flags
 
 /* Functions */
 
@@ -72,9 +72,9 @@ void uart_clear_buffer(void) {
 	uart_rx_buffer[0] = '\0';
 }
 
-void uart_promt(void) {
+void uart_prompt(void) {
 	/*
-	 * Send UART promt
+	 * Send UART prompt
 	 */
 	myputs("\r\n");
 	myputs(UART_PROMPT);
@@ -143,10 +143,10 @@ void uart_info(void) {
 	timedate[1] = '0' + ((RTCYEAR >> 8) & 0xf);
 	timedate[2] = '0' + ((RTCYEAR >> 4) & 0xf);
 	timedate[3] = '0' + (RTCYEAR & 0xf);
-	timedate[4] = ':';
+	timedate[4] = '-';
 	timedate[5] = '0' + (RTCMON >> 4);
 	timedate[6] = '0' + (RTCMON & 0xf);
-	timedate[7] = ':';
+	timedate[7] = '-';
 	timedate[8] = '0' + (RTCDAY >> 4);
 	timedate[9] = '0' + (RTCDAY & 0xf);
 	timedate[10] = '\0';
