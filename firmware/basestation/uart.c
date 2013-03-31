@@ -95,21 +95,36 @@ void uart_info(void) {
 	/*
 	 * Send info via UART
 	 */
-	char numbuffer[5];  // Buffer for integer to ASCII conversions
+	char numbuffer[9];  // Buffer for integer to ASCII conversions
 	myputs("\r\n");
 	myputs("FRAMenergymeter\r\n===============\r\nMax Groening, 2013\r\nFirmware " FWVERSION "\r\n");
 	uart_line();
-	myputs("Sensor(s), type, impulses/unit:\r\n");
+	myputs("Sensor(s), type, impulses/unit, combine:\r\n");
+	unsigned int i;
+	for (i = 0; i < MAX_SENSORS; i++) {
+		myputc('S');
+		myputc(i + '0');
+		myputs(", ");
+		sensor_type_string(sensors[i].sensor, numbuffer);  // (*sensors[i]).sensor
+		myputs(numbuffer);
+		myputs(", ");
+		int_to_ascii(sensors[i].impulses, numbuffer);
+		myputs(numbuffer);
+		myputs(", ");
+		int_to_ascii(sensors[i].sum_up, numbuffer);
+		myputs(numbuffer);
+		myputs("\r\n");
+	}
 
 //	myprintf("Memory: %d of %d used. (%d%%)\r\n", current_impulse, IMPULSE_SIZE, (current_impulse * 100 / IMPULSE_SIZE));  // Warning: printf uses lot of memory
 	myputs("Memory: ");
-	int_to_ascii(current_impulse, &numbuffer);
+	int_to_ascii(current_impulse, numbuffer);
 	myputs(numbuffer);
 	myputs(" of ");
-	int_to_ascii(IMPULSE_SIZE, &numbuffer);
+	int_to_ascii(IMPULSE_SIZE, numbuffer);
 	myputs(numbuffer);
 	myputs(" used. (");
-	int_to_ascii((current_impulse * 100 / IMPULSE_SIZE), &numbuffer);
+	int_to_ascii((current_impulse * 100 / IMPULSE_SIZE), numbuffer);
 	myputs(numbuffer);
 	myputs("%)\r\n");
 
@@ -156,7 +171,7 @@ void uart_info(void) {
 
 //	myprintf("Battery: %d mV\r\n", measure_battery());  // Warning: printf uses lot of memory
 	myputs("Battery: ");
-	int_to_ascii(measure_battery(), &numbuffer);
+	int_to_ascii(measure_battery(), numbuffer);
 	myputs(numbuffer);
 	myputs(" mV\r\n");
 	uart_line();
@@ -182,7 +197,7 @@ void uart_send(void) {
 	char numbuffer[5];  // Buffer for integer to ASCII conversions
 //	myprintf("Sending %d impulse(s):\r\n", current_impulse);  // Warning: printf uses lot of memory
 	myputs("Sending ");
-	int_to_ascii(current_impulse, &numbuffer);
+	int_to_ascii(current_impulse, numbuffer);
 	myputs(numbuffer);
 	myputs(" impulse(s):\r\n");
 

@@ -16,8 +16,12 @@
 
 #define FWVERSION "v0.0.1"
 #define IMPULSE_SIZE 1000  // Allocate memory for this many impulses
+#define MAX_SENSORS 4  // Maximum number of supported sensors
 
 /* Types */
+
+typedef enum {uart, cc2500} transmit_modes;
+typedef enum {disabled, electric, water, gas} sensor_type;  // See also string representation in sensor_type_string()
 
 typedef struct {
 	unsigned int year;
@@ -29,11 +33,17 @@ typedef struct {
 	unsigned char sec;
 } impulseStruct;
 
-typedef enum {uart, cc2500} transmit_modes;
+typedef struct {
+	sensor_type sensor;  // Type of sensor, see sensor_type enum
+	unsigned char impulses;  // Impulses per unit, e.g. 80 impulses = 1 kW*h
+	unsigned char sum_up;  // Combine multiple impulses and store them together?
+	unsigned char sum;  // Impulses left before storing
+} sensorsStruct;
 
 /* Globals */
 
-extern unsigned int current_impulse;
+extern unsigned int current_impulse;  // Pointer to impulseData
+extern sensorsStruct sensors[MAX_SENSORS];  // Stores settings for each sensor
 
 /* Functions */
 
@@ -57,7 +67,9 @@ void bcd_to_ascii_8(unsigned char bcd, char *ascii);  // Converts a BCD byte to 
 
 void bcd_to_ascii_16(unsigned char bcd, char *ascii);  // Converts a BCD word to ASCII
 
-void int_to_ascii();  // Converts an integer into ASCII
+void int_to_ascii(int num, char ascii[]);  // Converts an integer into ASCII
+
+void sensor_type_string(sensor_type sensor, char description[]);  // Returns the string representation of given sensor type
 
 
 #endif /* BASESTATION_H_ */

@@ -25,12 +25,15 @@ unsigned char rtc_sec = 0x0;  // Seconds = 0
 #pragma DATA_SECTION(impulseData, ".fram_vars")
 //#pragma NOINIT(impulseData)
 //#pragma PERSISTENT(impulseData)
-impulseStruct impulseData[IMPULSE_SIZE];
+impulseStruct impulseData[IMPULSE_SIZE];  // Permanently stores data of each impulse
 
 #pragma DATA_SECTION(current_impulse, ".fram_vars")
 //#pragma NOINIT(current_impulse)
 //#pragma PERSISTENT(current_impulse)
-unsigned int current_impulse = 0x0;
+unsigned int current_impulse = 0x0;  // Pointer to impulseData
+
+#pragma DATA_SECTION(sensors, ".fram_vars")
+sensorsStruct sensors[MAX_SENSORS];  // Stores settings for each sensor
 
 volatile unsigned char flag_sensor = 0x0;
 volatile unsigned char flag_rx = 0x0;
@@ -288,7 +291,7 @@ void bcd_to_ascii_16(unsigned char bcd, char *ascii) {
 	*ascii = '\0';
 }
 
-void int_to_ascii(int num, char *ascii) {
+void int_to_ascii(int num, char ascii[]) {
 	/*
 	 * Converts an integer into ASCII
 	 */
@@ -306,4 +309,49 @@ void int_to_ascii(int num, char *ascii) {
 		ascii[i-j-1] = tmp;
 	}
 	ascii[i] = '\0';
+}
+
+void sensor_type_string(sensor_type sensor, char description[]) {
+	/*
+	 * Returns the string representation of given sensor type
+	 */
+	if (sensor == disabled) {
+//		description = "disabled";
+		description[0] = 'd';
+		description[1] = 'i';
+		description[2] = 's';
+		description[3] = 'a';
+		description[4] = 'b';
+		description[5] = 'l';
+		description[6] = 'e';
+		description[7] = 'd';
+		description[8] = '\0';
+	} else if (sensor == electric) {
+//		description = "electric";
+		description[0] = 'e';
+		description[1] = 'l';
+		description[2] = 'e';
+		description[3] = 'c';
+		description[4] = 't';
+		description[5] = 'r';
+		description[6] = 'i';
+		description[7] = 'c';
+		description[8] = '\0';
+	} else if (sensor == water) {
+//		description = "water";
+		description[0] = 'w';
+		description[1] = 'a';
+		description[2] = 't';
+		description[3] = 'e';
+		description[4] = 'r';
+		description[5] = '\0';
+	} else if (sensor == gas) {
+//		description = "gas";
+		description[0] = 'g';
+		description[1] = 'a';
+		description[2] = 's';
+		description[3] = '\0';
+	} else {
+		description = "error";
+	}
 }
