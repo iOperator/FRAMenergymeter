@@ -47,7 +47,7 @@ int main(void) {
 		/* New command received */
 		if (uartFlags.command) {
 			P3OUT |= BIT4;
-			__delay_cycles(10000);
+//			__delay_cycles(8000);
 			myputs("\r\n");
 			uartFlags.command = 0;
 			if (uartFlags.sleep) {  // Waking up, show info

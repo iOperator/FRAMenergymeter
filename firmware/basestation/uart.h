@@ -55,6 +55,8 @@ void uart_send(void);  // Send stored impulses
 
 void uart_clear(void);  // Clear stored impulses
 
+unsigned int uart_user_ack(void);  // Returns 1 if user enters 'yes', 0 else.
+
 void uart_setup(void);  // Run configuration dialog
 
 void uart_error(void);  // No valid command received

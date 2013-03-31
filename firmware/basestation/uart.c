@@ -95,18 +95,19 @@ void uart_info(void) {
 	/*
 	 * Send info via UART
 	 */
-	char numbuffer[9];  // Buffer for integer to ASCII conversions
+	char numbuffer[5];  // Buffer for integer to ASCII conversions
 	myputs("\r\n");
 	myputs("FRAMenergymeter\r\n===============\r\nMax Groening, 2013\r\nFirmware " FWVERSION "\r\n");
 	uart_line();
-	myputs("Sensor(s), type, impulses/unit, combine:\r\n");
+	myputs("Sensor(s), type, impulses/unit, combined impulses:\r\n");
 	unsigned int i;
 	for (i = 0; i < MAX_SENSORS; i++) {
 		myputc('S');
 		myputc(i + '0');
 		myputs(", ");
-		sensor_type_string(sensors[i].sensor, numbuffer);  // (*sensors[i]).sensor
-		myputs(numbuffer);
+//		sensor_type_string(sensors[i].sensor, numbuffer);  // sensors[i]->sensor
+//		myputs(numbuffer);
+		myputs(sensor_type_strings[sensors[i].sensor]);
 		myputs(", ");
 		int_to_ascii(sensors[i].impulses, numbuffer);
 		myputs(numbuffer);
@@ -166,6 +167,9 @@ void uart_info(void) {
 	timedate[9] = '0' + (RTCDAY & 0xf);
 	timedate[10] = '\0';
 	myputs("RTC date: ");
+	while (!(RTCCTL01 & RTCRDY));
+	myputs(dow_strings[RTCDOW]);
+	myputs(", ");
 	myputs(timedate);
 	myputs("\r\n");
 
@@ -224,11 +228,42 @@ void uart_clear(void) {
 	uart_clear_buffer();
 }
 
+unsigned int uart_user_ack (void) {
+	/*
+	 * Returns 1 if user enters 'yes', 0 else.
+	 */
+	while (!uartFlags.command) {};
+	if (uart_rx_buffer[0] == 'y' && uart_rx_buffer[1] == 'e' && uart_rx_buffer[2] == 's') {
+		uartFlags.command = 0;
+		uart_clear_buffer();
+		return 1;
+	} else {
+		uartFlags.command = 0;
+		uart_clear_buffer();
+		return 0;
+	}
+}
+
 void uart_setup(void) {
 	/*
 	 * Run configuration dialog
 	 */
+	myputs("Setup\r\n");
+	uart_line();
+	myputs("Please type 'yes' to edit corresponding settings.\r\n");
+	myputs("Setup time and date? ");
+	if (uart_user_ack()) {
+		myputs("Year: ");
+		myputs("\r\n");
+	}
+	myputs("Setup number of sensors? ");
+	if (uart_user_ack()) {
 
+	}
+	myputs("Setup sensor type? ");
+	if (uart_user_ack()) {
+
+	}
 }
 
 void uart_error(void) {

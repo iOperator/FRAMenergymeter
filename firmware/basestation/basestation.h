@@ -21,7 +21,7 @@
 /* Types */
 
 typedef enum {uart, cc2500} transmit_modes;
-typedef enum {disabled, electric, water, gas} sensor_type;  // See also string representation in sensor_type_string()
+typedef enum {disabled, electric, water, gas} sensor_type;  // See also string representation in sensor_type_strings
 
 typedef struct {
 	unsigned int year;
@@ -44,6 +44,8 @@ typedef struct {
 
 extern unsigned int current_impulse;  // Pointer to impulseData
 extern sensorsStruct sensors[MAX_SENSORS];  // Stores settings for each sensor
+extern char * const sensor_type_strings[];
+extern char * const dow_strings[];
 
 /* Functions */
 
@@ -69,7 +71,7 @@ void bcd_to_ascii_16(unsigned char bcd, char *ascii);  // Converts a BCD word to
 
 void int_to_ascii(int num, char ascii[]);  // Converts an integer into ASCII
 
-void sensor_type_string(sensor_type sensor, char description[]);  // Returns the string representation of given sensor type
+//void sensor_type_string(sensor_type sensor, char description[]);  // Returns the string representation of given sensor type
 
 
 #endif /* BASESTATION_H_ */
