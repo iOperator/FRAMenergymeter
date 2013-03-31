@@ -18,7 +18,7 @@ int main(void) {
 	init();
 	init_uart();
 	init_rtc();
-	set_rtc();
+//	set_rtc();
 
 	_enable_interrupts();
 

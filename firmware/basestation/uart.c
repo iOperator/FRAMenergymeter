@@ -99,7 +99,7 @@ void uart_info(void) {
 	myputs("\r\n");
 	myputs("FRAMenergymeter\r\n===============\r\nMax Groening, 2013\r\nFirmware " FWVERSION "\r\n");
 	uart_line();
-	myputs("Sensor(s), type, impulses/unit, combined impulses:\r\n");
+	myputs("Sensor, type, impulses/unit, combined impulses:\r\n");
 	unsigned int i;
 	for (i = 0; i < MAX_SENSORS; i++) {
 		myputc('S');
@@ -253,10 +253,10 @@ void uart_setup(void) {
 	 */
 	myputs("Setup\r\n");
 	uart_line();
+	unsigned char input[4];
 	myputs("Please type 'yes' to edit corresponding settings.\r\n");
 	myputs("Setup time and date? ");
 	if (uart_user_ack()) {
-		unsigned char input[4];
 		myputs("Year: 'YYYY' ");
 		while (!uartFlags.command) {};
 		uartFlags.command = 0;
@@ -365,13 +365,50 @@ void uart_setup(void) {
 			myputs("Canceled.\r\n");
 		}
 	}
-	myputs("Setup number of sensors? ");
+	myputs("Setup sensors? ");
 	if (uart_user_ack()) {
-
-	}
-	myputs("Setup sensor type? ");
-	if (uart_user_ack()) {
-
+		unsigned int input_sensor;
+		unsigned char input_sensor_type, input_sensor_impulses, input_sensor_sum_up;
+		myputs("Which sensor? (0-");
+		myputc(MAX_SENSORS + '0' - 1);
+		myputs(") ");
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		uart_clear_buffer();
+		input_sensor = input[0] - '0';
+		myputs("Type of sensor? 0=disabled, 1=electric, 2=water, 3=gas ");  // See enum sensor_type and sensor_type_strings
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		uart_clear_buffer();
+		input_sensor_type = input[0] - '0';
+		myputs("How many impulses/unit? (001-255) ");
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		input[1] = uart_rx_buffer[1];
+		input[2] = uart_rx_buffer[2];
+		uart_clear_buffer();
+		input_sensor_impulses = ((input[0] - '0') * 100) + ((input[1] - '0') * 10) + (input[2] - '0');
+		myputs("Combine impulses? (001-255) 000=no ");
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		input[1] = uart_rx_buffer[1];
+		input[2] = uart_rx_buffer[2];
+		uart_clear_buffer();
+		input_sensor_sum_up = ((input[0] - '0') * 100) + ((input[1] - '0') * 10) + (input[2] - '0');
+		myputs("Correct? ");
+		if (uart_user_ack()) {
+			sensors[input_sensor].sensor = (sensor_type)input_sensor_type;
+			sensors[input_sensor].impulses = input_sensor_impulses;
+			sensors[input_sensor].sum_up = input_sensor_sum_up;
+			sensors[input_sensor].sum = 0;
+			myputs("Updated.\r\n");
+		} else {
+			myputs("Canceled.\r\n");
+		}
 	}
 }
 
