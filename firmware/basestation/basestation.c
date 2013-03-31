@@ -188,7 +188,7 @@ void clear_impulse_data(void) {
 		impulseData[i].year = 0x0;
 		impulseData[i].mon = 0x0;
 		impulseData[i].day = 0x0;
-		impulseData[i].dow = 0x0;
+//		impulseData[i].dow = 0x0;
 		impulseData[i].hour = 0x0;
 		impulseData[i].min = 0x0;
 		impulseData[i].sec = 0x0;
@@ -206,7 +206,7 @@ int save_impulse(void) {
 		impulseData[current_impulse].year = RTCYEAR;
 		impulseData[current_impulse].mon = RTCMON;
 		impulseData[current_impulse].day = RTCDAY;
-		impulseData[current_impulse].dow = RTCDOW;
+//		impulseData[current_impulse].dow = RTCDOW;
 		impulseData[current_impulse].hour = RTCHOUR;
 		impulseData[current_impulse].min = RTCMIN;
 		impulseData[current_impulse].sec = RTCSEC;
@@ -225,16 +225,17 @@ void send_impulses(transmit_modes tx_mode) {
 	if (tx_mode == uart) {
 		unsigned int i;
 		for (i = 0; i < current_impulse; i++) {
-			myputc((impulseData[i].year >> 12) + 0x30);  // Send BCD as ASCII
-			myputc(((impulseData[i].year >> 8) & 0xf) + 0x30);
+//			myputc((impulseData[i].year >> 12) + 0x30);  // Send BCD as ASCII
+//			myputc(((impulseData[i].year >> 8) & 0xf) + 0x30);
+			myputs("20");
 			myputc(((impulseData[i].year >> 4) & 0xf) + 0x30);
 			myputc((impulseData[i].year & 0xf) + 0x30);
 			myputc((impulseData[i].mon >> 4) + 0x30);
 			myputc((impulseData[i].mon & 0xf) + 0x30);
 			myputc((impulseData[i].day >> 4) + 0x30);
 			myputc((impulseData[i].day & 0xf) + 0x30);
-			myputc((impulseData[i].dow >> 4) + 0x30);
-			myputc((impulseData[i].dow & 0xf) + 0x30);
+//			myputc((impulseData[i].dow >> 4) + 0x30);
+//			myputc((impulseData[i].dow & 0xf) + 0x30);
 			myputc((impulseData[i].hour >> 4) + 0x30);
 			myputc((impulseData[i].hour & 0xf) + 0x30);
 			myputc((impulseData[i].min >> 4) + 0x30);

@@ -15,7 +15,7 @@
 /* Defines */
 
 #define FWVERSION "v0.0.1"
-#define IMPULSE_SIZE 1000  // Allocate memory for this many impulses
+#define IMPULSE_SIZE 1250  // Allocate memory for this many impulses
 #define MAX_SENSORS 4  // Maximum number of supported sensors
 
 /* Types */
@@ -24,10 +24,11 @@ typedef enum {uart, cc2500} transmit_modes;
 typedef enum {disabled, electric, water, gas} sensor_type;  // See also string representation in sensor_type_strings
 
 typedef struct {
-	unsigned int year;
+//	unsigned int year;
+	unsigned char year;  // Just save 20xx instead of full 4-digit year
 	unsigned char mon;
 	unsigned char day;
-	unsigned char dow;
+//	unsigned char dow;  // Day of week is redundant information
 	unsigned char hour;
 	unsigned char min;
 	unsigned char sec;

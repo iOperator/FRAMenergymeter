@@ -155,8 +155,11 @@ void uart_info(void) {
 //	bcd_to_ascii_8(RTCMON, &timedate[5]);
 //	timedate[7] = ':';
 //	bcd_to_ascii_8(RTCDAY, &timedate[8]);
-	timedate[0] = '0' + ((RTCYEAR >> 12) & 0xf);
-	timedate[1] = '0' + ((RTCYEAR >> 8) & 0xf);
+
+//	timedate[0] = '0' + ((RTCYEAR >> 12) & 0xf);
+//	timedate[1] = '0' + ((RTCYEAR >> 8) & 0xf);
+	timedate[0] = '2';
+	timedate[1] = '0';
 	timedate[2] = '0' + ((RTCYEAR >> 4) & 0xf);
 	timedate[3] = '0' + (RTCYEAR & 0xf);
 	timedate[4] = '-';
