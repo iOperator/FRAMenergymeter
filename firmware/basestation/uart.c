@@ -256,8 +256,114 @@ void uart_setup(void) {
 	myputs("Please type 'yes' to edit corresponding settings.\r\n");
 	myputs("Setup time and date? ");
 	if (uart_user_ack()) {
-		myputs("Year: ");
-		myputs("\r\n");
+		unsigned char input[4];
+		myputs("Year: 'YYYY' ");
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		input[1] = uart_rx_buffer[1];
+		input[2] = uart_rx_buffer[2];
+		input[3] = uart_rx_buffer[3];
+		uart_clear_buffer();
+//		myputs("Correct? ");
+//		if (uart_user_ack()) {
+			// Convert year to hex
+			rtc_year = (0x2000 + (input[2] - '0') << 4) + ((input[3] - '0'));
+//		} else {
+//			myputs("Canceled.\r\n");
+//			return;
+//		}
+		myputs("Month: 'MM' ");
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		input[1] = uart_rx_buffer[1];
+		uart_clear_buffer();
+//		myputs("Correct? ");
+//		if (uart_user_ack()) {
+			// Convert month to hex
+			rtc_mon = ((input[0] - '0') << 4) + ((input[1] - '0'));
+//		} else {
+//			myputs("Canceled.\r\n");
+//			return;
+//		}
+		myputs("Day: 'DD' ");
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		input[1] = uart_rx_buffer[1];
+		uart_clear_buffer();
+//		myputs("Correct? ");
+//		if (uart_user_ack()) {
+			// Convert day to hex
+			rtc_day = ((input[0] - '0') << 4) + ((input[1] - '0'));
+//		} else {
+//			myputs("Canceled.\r\n");
+//			return;
+//		}
+		myputs("Day of week: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat ");
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		uart_clear_buffer();
+//		myputs("Correct? ");
+//		if (uart_user_ack()) {
+			// Convert day to hex
+			rtc_dow = (input[0] - '0');
+//		} else {
+//			myputs("Canceled.\r\n");
+//			return;
+//		}
+		myputs("Hour: 'hh' (24h notation) ");
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		input[1] = uart_rx_buffer[1];
+		uart_clear_buffer();
+//		myputs("Correct? ");
+//		if (uart_user_ack()) {
+			// Convert hour to hex
+			rtc_hour = ((input[0] - '0') << 4) + ((input[1] - '0'));
+//		} else {
+//			myputs("Canceled.\r\n");
+//			return;
+//		}
+		myputs("Minute: 'mm' ");
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		input[1] = uart_rx_buffer[1];
+		uart_clear_buffer();
+//		myputs("Correct? ");
+//		if (uart_user_ack()) {
+			// Convert minute to hex
+			rtc_min = ((input[0] - '0') << 4) + ((input[1] - '0'));
+//		} else {
+//			myputs("Canceled.\r\n");
+//			return;
+//		}
+		myputs("Second: 'ss' ");
+		while (!uartFlags.command) {};
+		uartFlags.command = 0;
+		input[0] = uart_rx_buffer[0];
+		input[1] = uart_rx_buffer[1];
+		uart_clear_buffer();
+//		myputs("Correct? ");
+//		if (uart_user_ack()) {
+			// Convert day to hex
+			rtc_sec = ((input[0] - '0') << 4) + ((input[1] - '0'));
+//		} else {
+//			myputs("Canceled.\r\n");
+//			return;
+//		}
+		// Setting new date
+		myputs("Correct? ");
+		if (uart_user_ack()) {
+			set_rtc();
+			myputs("Updated.\r\n");
+		} else {
+			myputs("Canceled.\r\n");
+		}
 	}
 	myputs("Setup number of sensors? ");
 	if (uart_user_ack()) {

@@ -21,7 +21,7 @@
 /* Types */
 
 typedef enum {uart, cc2500} transmit_modes;
-typedef enum {disabled, electric, water, gas} sensor_type;  // See also string representation in sensor_type_strings
+typedef enum {disabled, electric, water, gas} sensor_type;  // Also see string representation in sensor_type_strings
 
 typedef struct {
 //	unsigned int year;
@@ -42,6 +42,15 @@ typedef struct {
 } sensorsStruct;
 
 /* Globals */
+
+// Stores time and date for RTC update (in BCD)
+extern unsigned int rtc_year;
+extern unsigned char rtc_mon;
+extern unsigned char rtc_day;
+extern unsigned char rtc_dow;
+extern unsigned char rtc_hour;
+extern unsigned char rtc_min;
+extern unsigned char rtc_sec;
 
 extern unsigned int current_impulse;  // Pointer to impulseData
 extern sensorsStruct sensors[MAX_SENSORS];  // Stores settings for each sensor

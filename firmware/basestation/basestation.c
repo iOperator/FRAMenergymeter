@@ -34,7 +34,7 @@ unsigned int current_impulse = 0x0;  // Pointer to impulseData
 
 #pragma DATA_SECTION(sensors, ".fram_vars")
 sensorsStruct sensors[MAX_SENSORS];  // Stores settings for each sensor
-char * const sensor_type_strings[] = {"disabled", "electric", "water", "gas"};  // See also enum sensor_type
+char * const sensor_type_strings[] = {"disabled", "electric", "water", "gas"};  // Also see enum sensor_type
 
 char * const dow_strings[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
@@ -165,8 +165,8 @@ void set_rtc(void) {
 	/*
 	 * Set the RTC with values stored in global rtc_* variables
 	 */
-	// while (RTCCTL01 & RTCRDY);  // Wait until RTC is getting updated.
-	// while (!(RTCCTL01 & RTCRDY));  // Trap it until the update finish.
+	while (RTCCTL01 & RTCRDY);  // Wait until RTC is getting updated.
+	while (!(RTCCTL01 & RTCRDY));  // Trap it until the update finish.
 	RTCCTL01 |= RTCHOLD;
 	RTCYEAR = rtc_year;
 	RTCMON = rtc_mon;
