@@ -22,12 +22,7 @@ int main(void) {
 
 	_enable_interrupts();
 
-//	clear_impulse_data();  // TESTING ONLY
-//	uart_info();
-//	uart_prompt();
-//	uart_clear_buffer();
-//	uart_rx_buffer_p = 0x0;  // TESTING ONLY
-	uartFlags.echo = 0;
+	uartFlags.echo = 0;  // Don't echo input until wake up
 	uartFlags.prompt = 1;
 	uartFlags.sleep = 1;
 
@@ -46,7 +41,7 @@ int main(void) {
 		}
 		/* New command received */
 		if (uartFlags.command) {
-			P3OUT |= BIT4;
+			P3OUT |= BIT4;  // Enable UART activity LED
 //			__delay_cycles(8000);
 			myputs("\r\n");
 			uartFlags.command = 0;
@@ -58,6 +53,7 @@ int main(void) {
 				uart_prompt();
 				continue;
 			}
+			/* Checking UART commands */
 			if (uart_rx_buffer[0] == 'i' && uart_rx_buffer[1] == 'n' && uart_rx_buffer[2] == 'f' && uart_rx_buffer[3] == 'o') {  // Info
 				uart_clear_buffer();
 				uart_info();
@@ -91,7 +87,7 @@ int main(void) {
 				uart_prompt();
 			}
 		} else {
-			P3OUT &= ~BIT4;
+			P3OUT &= ~BIT4;  // Disable UART activity LED
 		}
 	}
 }
