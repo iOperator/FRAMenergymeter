@@ -22,15 +22,19 @@ __interrupt void Port1InterruptHandler(void) {
 			break;
 		case P1IV_P1IFG0:
 			flag_sensor |= BIT0;
+			LPM3_EXIT;  // Stay awake
 			break;
 		case P1IV_P1IFG1:
 			flag_sensor |= BIT1;
+			LPM3_EXIT;
 			break;
 		case P1IV_P1IFG2:
 			flag_sensor |= BIT2;
+			LPM3_EXIT;
 			break;
 		case P1IV_P1IFG3:
 			flag_sensor |= BIT3;
+			LPM3_EXIT;
 			break;
 		case P1IV_P1IFG4:
 			break;
@@ -49,8 +53,10 @@ __interrupt void Port4InterruptHandler(void) {
 		case P4IV_NONE:
 			break;
 		case P4IV_P4IFG0:
+			LPM3_EXIT;  // Pushbutton S1 (for debuging)
 			break;
 		case P4IV_P4IFG1:
+			LPM3_EXIT;  // Pushbutton S1 (for debuging)
 			break;
 		case P4IV_P4IFG2:
 			break;
@@ -98,6 +104,7 @@ __interrupt void USCIA0InterruptHandler(void) {
 				UCA0TXBUF = uart_rx_char;
 //				myputc(uart_rx_char);
 			}
+			LPM3_EXIT;
 			break;
 		case USCI_UART_UCTXIFG:  // Transmit buffer empty
 			break;

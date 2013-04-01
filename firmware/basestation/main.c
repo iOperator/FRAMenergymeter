@@ -108,5 +108,8 @@ int main(void) {
 				flag_sensor &= ~BIT0;
 			}
 		}
+		/* Entering sleep mode */
+		LPM3;
+		_nop();
 	}
 }
