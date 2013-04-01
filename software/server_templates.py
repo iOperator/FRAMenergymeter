@@ -10,7 +10,8 @@ https://github.com/iOperator/FRAMenergymeter
 Max Gröning, 2013
 """
 
-TPL_INDEX = """\
+tpl_index = """\
+%include: tpl_header title='info'
 <p><b>FRAMenergymeter</b></p>
 %if data['connection']:
 <p>Connected to device.</p>
@@ -27,4 +28,17 @@ TPL_INDEX = """\
 </ul>
 </p>
 <p>Device stores {{data['memory'][0]}} of {{data['memory'][1]}} possible entries. ({{int(data['memory'][0]) / float(data['memory'][1]) * 100}}% full)</p>
+<p>Time and date of the device {{data['date']}}, {{data['time']}}</p>
+%if data['data'] == []:
+<p>No new data.</p>
+%else:
+<p>Getting new data ...</p>
+  %# Testing only
+<ul>
+  %for line in data['data']:
+  <li>{{line}}</li>
+  %end
+</ul>
+%end
+%include tpl_footer
 """

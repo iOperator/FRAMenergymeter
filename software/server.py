@@ -24,6 +24,7 @@ PORT = 8080
 @route('/info/')
 def index():
     data = main()
-    return template(TPL_INDEX, data=data)
+    return template(tpl_index, data=data)
 
-run(host=HOST, port=PORT)
+# run(host=HOST, port=PORT)
+run(host=HOST, port=PORT, debug=True, reloader=True)  # For easier debugging
