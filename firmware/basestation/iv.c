@@ -15,6 +15,34 @@
 
 /* ISR */
 
+#pragma vector = PORT1_VECTOR
+__interrupt void Port1InterruptHandler(void) {
+	switch (__even_in_range(P1IV, P1IV_P1IFG7)) {
+		case P1IV_NONE:
+			break;
+		case P1IV_P1IFG0:
+			flag_sensor |= BIT0;
+			break;
+		case P1IV_P1IFG1:
+			flag_sensor |= BIT1;
+			break;
+		case P1IV_P1IFG2:
+			flag_sensor |= BIT2;
+			break;
+		case P1IV_P1IFG3:
+			flag_sensor |= BIT3;
+			break;
+		case P1IV_P1IFG4:
+			break;
+		case P1IV_P1IFG5:
+			break;
+		case P1IV_P1IFG6:
+			break;
+		case P1IV_P1IFG7:
+			break;
+	}
+}
+
 #pragma vector = PORT4_VECTOR
 __interrupt void Port4InterruptHandler(void) {
 	switch (__even_in_range(P4IV, P4IV_P4IFG7)) {
@@ -81,7 +109,7 @@ __interrupt void USCIA0InterruptHandler(void) {
 }
 
 #pragma vector = ADC10_VECTOR, COMP_D_VECTOR, DMA_VECTOR, \
-	PORT1_VECTOR, PORT2_VECTOR, PORT3_VECTOR, \
+	PORT2_VECTOR, PORT3_VECTOR, \
 	RTC_VECTOR, SYSNMI_VECTOR, \
 	TIMER0_A0_VECTOR, TIMER0_A1_VECTOR, TIMER0_B0_VECTOR, TIMER0_B1_VECTOR, \
 	TIMER1_A0_VECTOR, TIMER1_A1_VECTOR, TIMER1_B0_VECTOR, TIMER1_B1_VECTOR, \

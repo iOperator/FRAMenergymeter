@@ -89,5 +89,24 @@ int main(void) {
 		} else {
 			P3OUT &= ~BIT4;  // Disable UART activity LED
 		}
+		/* Sensors */
+		if (flag_sensor) {  // ISR triggered
+			if (flag_sensor & BIT0) {
+				if (!sensors[0].sensor) {  // Sensor enabled
+					if (sensors[0].sum_up >= 1) {  // Combine impulses before storing them
+						if (sensors[0].sum >= 1) {
+							sensors[0].sum--;
+						} else {
+							sensors[0].sum = sensors[0].sum_up;
+							save_impulse();
+						}
+						save_impulse();
+					} else {  // Don't combine, store every impulse
+						save_impulse();
+					}
+				}
+				flag_sensor &= ~BIT0;
+			}
+		}
 	}
 }

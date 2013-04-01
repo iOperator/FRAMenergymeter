@@ -14,7 +14,7 @@
 
 /* Defines */
 
-#define FWVERSION "v0.0.1"
+#define FWVERSION "v0.1.0"
 #define IMPULSE_SIZE 1250  // Allocate memory for this many impulses
 #define MAX_SENSORS 4  // Maximum number of supported sensors
 
@@ -56,6 +56,10 @@ extern unsigned int current_impulse;  // Pointer to impulseData
 extern sensorsStruct sensors[MAX_SENSORS];  // Stores settings for each sensor
 extern char * const sensor_type_strings[];
 extern char * const dow_strings[];
+
+extern volatile unsigned char flag_sensor;
+extern volatile unsigned char flag_rx;
+extern volatile unsigned char flag_button;
 
 /* Functions */
 
