@@ -29,10 +29,9 @@ int main(void) {
 	while(1) {
 		// TESTING ONLY
 		if (!(P4IN & BIT0)) {
-			P3OUT &= ~(BIT7 + BIT6);
-			save_impulse();
-		} else {
 			P3OUT |= BIT7 + BIT6;
+			save_impulse();
+			P3OUT &= ~(BIT7 + BIT6);
 		}
 		if (!(P4IN & BIT1)) {
 //			clear_impulse_data();
@@ -86,28 +85,59 @@ int main(void) {
 				uart_error();
 				uart_prompt();
 			}
-		} else {
-			P3OUT &= ~BIT4;  // Disable UART activity LED
 		}
 		/* Sensors */
 		if (flag_sensor) {  // ISR triggered
-			if (flag_sensor & BIT0) {
-				if (!sensors[0].sensor) {  // Sensor enabled
-					if (sensors[0].sum_up >= 1) {  // Combine impulses before storing them
-						if (sensors[0].sum >= 1) {
+			if (flag_sensor & BIT0) {  // Sensor 0 triggered
+				if (sensors[0].sensor != disabled) {  // Sensor enabled
+//					if (sensors[0].sum_up > 1) {  // Combine impulses before storing them
+						if (sensors[0].sum > 1) {
 							sensors[0].sum--;
 						} else {
 							sensors[0].sum = sensors[0].sum_up;
 							save_impulse();
 						}
-						save_impulse();
-					} else {  // Don't combine, store every impulse
-						save_impulse();
-					}
+//					} else {  // Don't combine, store every impulse
+//						save_impulse();
+//					}
 				}
 				flag_sensor &= ~BIT0;
 			}
+			if (flag_sensor & BIT1) {  // Sensor 1 triggered
+				if (sensors[1].sensor != disabled) {  // Sensor enabled
+					if (sensors[1].sum > 1) {
+						sensors[1].sum--;
+					} else {
+						sensors[1].sum = sensors[1].sum_up;
+						save_impulse();
+					}
+				}
+				flag_sensor &= ~BIT1;
+			}
+			if (flag_sensor & BIT2) {  // Sensor 2 triggered
+				if (sensors[2].sensor != disabled) {  // Sensor enabled
+					if (sensors[2].sum > 1) {
+						sensors[2].sum--;
+					} else {
+						sensors[2].sum = sensors[2].sum_up;
+						save_impulse();
+					}
+				}
+				flag_sensor &= ~BIT2;
+			}
+			if (flag_sensor & BIT3) {  // Sensor 3 triggered
+				if (sensors[3].sensor != disabled) {  // Sensor enabled
+					if (sensors[3].sum > 1) {
+						sensors[3].sum--;
+					} else {
+						sensors[3].sum = sensors[3].sum_up;
+						save_impulse();
+					}
+				}
+				flag_sensor &= ~BIT3;
+			}
 		}
+		P3OUT &= ~BIT4;  // Disable UART activity LED
 		/* Entering sleep mode */
 		LPM3;
 		_nop();

@@ -404,7 +404,7 @@ void uart_setup(void) {
 			sensors[input_sensor].sensor = (sensor_type)input_sensor_type;
 			sensors[input_sensor].impulses = input_sensor_impulses;
 			sensors[input_sensor].sum_up = input_sensor_sum_up;
-			sensors[input_sensor].sum = 0;
+			sensors[input_sensor].sum = input_sensor_sum_up;  // Initial setup of sum
 			myputs("Updated.\r\n");
 		} else {
 			myputs("Canceled.\r\n");

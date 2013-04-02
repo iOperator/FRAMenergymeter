@@ -53,7 +53,10 @@ void init(void) {
 	/*
 	 * I/Os
 	 *
-	 * P1.0  Impulse Sensor 1 (input)
+	 * P1.0  Impulse Sensor 0 (input)
+	 * P1.1  Impulse Sensor 1 (input)
+	 * P1.2  Impulse Sensor 2 (input)
+	 * P1.3  Impulse Sensor 3 (input)
 	 * P2.0  UCA0TXD
 	 * P2.1  UCA0RXD
 	 * P3.7  LED 8
@@ -68,12 +71,12 @@ void init(void) {
 	 */
 
 	/* Port 1 */
-	P1OUT &= ~(BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output low or pulldown
-	P1OUT |= BIT0;  // Output high or pullup
-	P1DIR |= (BIT1 + BIT2 + BIT3 + BIT4 + BIT5 + BIT6 + BIT7);  // Output direction
-	P1REN |= BIT0;  // Enable pullup/pulldown resistors
-	P1IES |= BIT0;  // Set interrupt flag on high-to-low transition
-	P1IE |= BIT0;  // Enable interrupt
+	P1OUT &= ~(BIT4 + BIT5 + BIT6 + BIT7);  // Output low or pulldown
+	P1OUT |= BIT0 + BIT1 + BIT2 + BIT3;  // Output high or pullup
+	P1DIR |= (BIT4 + BIT5 + BIT6 + BIT7);  // Output direction
+	P1REN |= BIT0 + BIT1 + BIT2 + BIT3;  // Enable pullup/pulldown resistors
+	P1IES |= BIT0 + BIT1 + BIT2 + BIT3;  // Set interrupt flag on high-to-low transition
+	P1IE |= BIT0 + BIT1 + BIT2 + BIT3;  // Enable interrupt
 	P1IFG = 0;  // Clear P1 interrupt flags
 
 	/* Port 2 */
