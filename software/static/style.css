@@ -1,0 +1,57 @@
+/*
+Name: FRAMenergymeter style
+Date: March 2013
+Description: 
+Version: 0.1
+Author: Max Gröning
+Author URI: http://www.max-g.net
+*/
+
+/* Body */
+
+body {
+  background: url('pattern.png') repeat;
+  font-size: 16px;
+}
+
+#content {
+  position: relative;
+  background: #f0f0f0;
+  width: 980px;
+  left: 50%;
+  padding: 25px;
+  margin-left: -490px;
+  border-radius: 8px;
+}
+
+#header .title {
+  font-size: 2rem;
+  /* color: #69799A; */
+  color: #ccc;
+  text-shadow: 0 -1px 1px #666, 0 1px 1px #fff; /* inset */
+  /* text-shadow: 0 -1px 1px #FFF, 0 1px 1px #666; */ /* emboss */
+}
+
+#footer {
+  font-size: 0.5rem;
+  color: #69799A;
+}
+
+#graphdiv {
+  width: 800px;
+  heigth: 500px;
+}
+
+ul#navbar {
+  font-size: 1rem;
+}
+
+ul#navbar li {
+  list-style: none;
+  display: inline;
+}
+
+ul#navbar a {
+  text-decoration: none;
+  text-shadow: none;
+}

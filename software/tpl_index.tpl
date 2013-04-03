@@ -1,18 +1,4 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-"""server.py
-FRAMenergymeter
-Track your energy consumption with a TI MSP-EXP430FR5739
-
-https://github.com/iOperator/FRAMenergymeter
-
-Max Gröning, 2013
-"""
-
-tpl_index = """\
-%include: tpl_header title='info'
-<p><b>FRAMenergymeter</b></p>
+%include: tpl_header title='info', load_graph=load_graph
 %if data['connection']:
 <p>Connected to device.</p>
 %else:
@@ -39,6 +25,20 @@ tpl_index = """\
   <li>{{line}}</li>
   %end
 </ul>
+<div id="graphdiv" style="width: 950px; heigth: 600px;"></div>
+<script type="text/javascript">
+  g = new Dygraph(
+  // Containing DIV
+  document.getElementById("graphdiv"),
+  // Data
+  "Time and date,{{','.join([entry[0] for entry in data['active_sensors']])}},\n"
+  %i = 0
+  %for datum in data['data']:
+    %i += 1
+    %datetime = datum[0:4] + '-' + datum[4:6] + '-' + datum[6:8] + ' ' + datum[8:10] + ':' + datum[10:12] + ':' + datum[12:14]
+  + "{{datetime}},{{round(i/75.0, 3)}}\n"
+  %end
+  );
+</script>
 %end
 %include tpl_footer
-"""
