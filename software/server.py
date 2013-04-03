@@ -14,6 +14,7 @@ from bottle import route, run, template, static_file, install  # Bottle
 from bottle import get, post, request
 from bottle_sqlite import SQLitePlugin  # Bottle SQLite Plugin
 from bottle import debug
+from basestation_lib import *
 from basestation_uart import *
 
 # Bottle settings
@@ -31,14 +32,12 @@ def index():
     return template('tpl_index', data=data, load_graph=True)
 
 @route('/energy')
-def energy():
-    data = main()
-    return template('tpl_energy', data=data, load_graph=True)
+def energy(db):
+    return template('tpl_energy', load_graph=True, db=db)
 
 @route('/power')
-def power():
-    data = main()
-    return template('tpl_power', data=data, load_graph=True)
+def power(db):
+    return template('tpl_power', load_graph=True, db=db)
 
 @route('/update')
 @route('/update', method='POST')

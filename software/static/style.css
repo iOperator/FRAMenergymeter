@@ -20,7 +20,7 @@ body {
   width: 980px;
   left: 50%;
   padding: 25px;
-  margin-left: -490px;
+  margin-left: -515px;
   border-radius: 8px;
 }
 
@@ -48,6 +48,7 @@ body {
 
 ul#navbar {
   font-size: 1rem;
+  padding: 0px;
 }
 
 ul#navbar li {
