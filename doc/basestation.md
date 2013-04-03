@@ -25,7 +25,10 @@ Pinheaders on the MSP-EXP430FR5739:
     P1.6                        P1.1
     P1.7               ImpSens  P1.0
 
-P1.0 Impulse Sensor 1
+P1.0 Impulse Sensor 0  
+P1.1 Impulse Sensor 1  
+P1.2 Impulse Sensor 2  
+P1.3 Impulse Sensor 3
 
 P4.0  Pushbutton S1  
 P4.1  Pushbutton S2
