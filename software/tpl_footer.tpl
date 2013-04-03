@@ -1,4 +1,4 @@
-<div id="footer">FRAMenergymeter, Max Gröning, 2013</div>
+<div id="footer"><p>FRAMenergymeter, Max Gröning, 2013</p></div>
 </div>
 </body>
 </html>

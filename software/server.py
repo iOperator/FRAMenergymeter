@@ -10,15 +10,20 @@ https://github.com/iOperator/FRAMenergymeter
 Max Gröning, 2013
 """
 
-from bottle import route, run, template, static_file  # Bottle
+from bottle import route, run, template, static_file, install  # Bottle
+from bottle import get, post, request
+from bottle_sqlite import SQLitePlugin  # Bottle SQLite Plugin
 from bottle import debug
 from basestation_uart import *
 
 # Bottle settings
 HOST = 'localhost'
 PORT = 8080
+DBFILENAME = 'data.db'
 
 ###############################################################################
+
+install(SQLitePlugin(dbfile=DBFILENAME))
 
 @route('/')
 def index():
@@ -26,19 +31,20 @@ def index():
     return template('tpl_index', data=data, load_graph=True)
 
 @route('/energy')
-def index():
+def energy():
     data = main()
     return template('tpl_energy', data=data, load_graph=True)
 
 @route('/power')
-def index():
+def power():
     data = main()
     return template('tpl_power', data=data, load_graph=True)
 
 @route('/update')
-def index():
+@route('/update', method='POST')
+def update(db):
     data = main()
-    return template('tpl_update', data=data, load_graph=False)
+    return template('tpl_update', data=data, load_graph=False, request=request, db=db)
 
 @route('/static/<filename>')
 def static_serve(filename):

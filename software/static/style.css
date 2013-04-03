@@ -64,3 +64,7 @@ ul#navbar a {
 ul#navbar a:hover {
   color: #666;
 }
+
+ul#device_data li {
+  font-size: 0.6rem;
+}
