@@ -10,7 +10,7 @@ Author URI: http://www.max-g.net
 /* Body */
 
 body {
-  background: url('pattern.png') repeat;
+  background: url('/static/pattern2.png') repeat;
   font-size: 16px;
 }
 

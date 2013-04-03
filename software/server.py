@@ -21,21 +21,14 @@ PORT = 8080
 ###############################################################################
 
 @route('/')
+@route('/info')
 def index():
     data = main()
     return template('tpl_index', data=data, load_graph=True)
 
-@route('/static/style.css')
-def static_style():
-    return static_file('style.css', root='./static')
-
-@route('/static/pattern.png')
-def static_pattern():
-    return static_file('pattern2.png', root='./static')
-
-@route('/static/dygraph-combined.js')
-def static_graph():
-    return static_file('dygraph-combined.js', root='./static')
+@route('/static/<filename>')
+def static_serve(filename):
+    return static_file(filename, root='./static')
 
 # run(host=HOST, port=PORT)
 run(host=HOST, port=PORT, debug=True, reloader=True)  # For easier debugging
