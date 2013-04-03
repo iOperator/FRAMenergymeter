@@ -12,10 +12,10 @@
 %end
 <body>
 <div id="content">
-<div id="header"><span class="title">FRAMenergymeter</span>
+<div id="header"><a href="/"><span class="title">FRAMenergymeter</span></a>
 <ul id="navbar">
-  <li><a href="/power/">power</a></li>
-  <li><a href="/energy">energy</a></li>
-  <li><a href="/update">refresh</a></li>
+  <li><a href="/power">Power</a></li>
+  <li><a href="/energy">Energy</a></li>
+  <li><a href="/update">Update</a></li>
 </ul>
 <hr></div>

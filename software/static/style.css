@@ -32,8 +32,12 @@ body {
   /* text-shadow: 0 -1px 1px #FFF, 0 1px 1px #666; */ /* emboss */
 }
 
+#header a {
+  text-decoration: none;
+}
+
 #footer {
-  font-size: 0.5rem;
+  font-size: 0.6rem;
   color: #69799A;
 }
 
@@ -54,4 +58,9 @@ ul#navbar li {
 ul#navbar a {
   text-decoration: none;
   text-shadow: none;
+  color: #000;
+}
+
+ul#navbar a:hover {
+  color: #666;
 }

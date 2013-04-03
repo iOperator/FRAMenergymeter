@@ -21,10 +21,24 @@ PORT = 8080
 ###############################################################################
 
 @route('/')
-@route('/info')
 def index():
     data = main()
     return template('tpl_index', data=data, load_graph=True)
+
+@route('/energy')
+def index():
+    data = main()
+    return template('tpl_energy', data=data, load_graph=True)
+
+@route('/power')
+def index():
+    data = main()
+    return template('tpl_power', data=data, load_graph=True)
+
+@route('/update')
+def index():
+    data = main()
+    return template('tpl_update', data=data, load_graph=False)
 
 @route('/static/<filename>')
 def static_serve(filename):
