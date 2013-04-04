@@ -56,7 +56,11 @@ def main(port=PORT, baudrate=BAUDRATE):
     ser.port = port
     ser.timeout = TIMEOUT
 
-    ser.open()
+    try:
+        ser.open()
+    except:
+        data['connection'] = False
+        return data
 
     if ser.isOpen():
         data['connection'] = True

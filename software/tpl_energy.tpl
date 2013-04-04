@@ -7,6 +7,9 @@
 %for row in db_results:
   %data.append([row[0], row[1], row[2]])
 %end
+%if data == []:
+<p>Database is empty.</p>
+%else:
 <div id="graphdiv" style="width: 950px; heigth: 600px;"></div>
 <script type="text/javascript">
   g = new Dygraph(
@@ -23,4 +26,5 @@
   , { fillGraph: true }  // fillGraph: true, animatedZooms: true, showRangeSelector: true
   );
 </script>
+%end
 %include tpl_footer
