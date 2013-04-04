@@ -27,9 +27,8 @@ DBFILENAME = 'data.db'
 install(SQLitePlugin(dbfile=DBFILENAME))
 
 @route('/')
-def index():
-    data = main()
-    return template('tpl_index', data=data, load_graph=True)
+def index(db):
+    return template('tpl_index', load_graph=False, db=db)
 
 @route('/energy')
 def energy(db):
