@@ -20,4 +20,5 @@ con = sqlite3.connect(DBFILENAME)
 
 # Create a new database
 con.execute("CREATE TABLE data (id INTEGER PRIMARY KEY, datum TEXT NOT NULL, sensor INTEGER NOT NULL)")
+con.execute("CREATE TABLE config (setting TEXT PRIMARY KEY, value TEXT NOT NULL)")
 con.commit()
