@@ -18,7 +18,7 @@ def datum_string(datum):
     """Converts a datum from the basestation into a
     JavaScript compatible format.
     """
-    return datum[0:4] + '-' + datum[4:6] + '-' + datum[6:8] + \
+    return datum[0:4] + '/' + datum[4:6] + '/' + datum[6:8] + \
         ' ' + datum[8:10] + ':' + datum[10:12] + ':' + datum[12:14]
 
 def datum_difference(datum1, datum2):
