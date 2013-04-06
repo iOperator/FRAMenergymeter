@@ -14,14 +14,14 @@
 
 /* Defines */
 
-#define FWVERSION "v0.1.0"
+#define FWVERSION "v0.1.1"
 #define IMPULSE_SIZE 1250  // Allocate memory for this many impulses
 #define MAX_SENSORS 4  // Maximum number of supported sensors
 
 /* Types */
 
 typedef enum {uart, cc2500} transmit_modes;
-typedef enum {disabled=0, electric=1, water=2, gas=3} sensor_type;  // Also see string representation in sensor_type_strings
+typedef enum {disabled=0, electricity=1, water=2, gas=3} sensor_type;  // Also see string representation in sensor_type_strings
 
 typedef struct {
 //	unsigned int year;

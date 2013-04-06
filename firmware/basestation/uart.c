@@ -377,7 +377,7 @@ void uart_setup(void) {
 		input[0] = uart_rx_buffer[0];
 		uart_clear_buffer();
 		input_sensor = input[0] - '0';
-		myputs("Type of sensor? 0=disabled, 1=electric, 2=water, 3=gas ");  // See enum sensor_type and sensor_type_strings
+		myputs("Type of sensor? 0=disabled, 1=electricity, 2=water, 3=gas ");  // See enum sensor_type and sensor_type_strings
 		while (!uartFlags.command) {};
 		uartFlags.command = 0;
 		input[0] = uart_rx_buffer[0];

@@ -34,7 +34,7 @@ unsigned int current_impulse = 0x0;  // Pointer to impulseData
 
 #pragma DATA_SECTION(sensors, ".fram_vars")
 sensorsStruct sensors[MAX_SENSORS];  // Stores settings for each sensor
-char * const sensor_type_strings[] = {"disabled", "electric", "water", "gas"};  // Also see enum sensor_type
+char * const sensor_type_strings[] = {"disabled", "electricity", "water", "gas"};  // Also see enum sensor_type
 
 char * const dow_strings[] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 
@@ -333,8 +333,8 @@ void int_to_ascii(int num, char ascii[]) {
 //		description[6] = 'e';
 //		description[7] = 'd';
 //		description[8] = '\0';
-//	} else if (sensor == electric) {
-////		description = "electric";
+//	} else if (sensor == electricity) {
+////		description = "electricity";
 //		description[0] = 'e';
 //		description[1] = 'l';
 //		description[2] = 'e';
