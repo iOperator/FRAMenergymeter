@@ -44,6 +44,31 @@ def update(db):
     data = main()
     return template('tpl_update', data=data, load_graph=False, request=request, db=db)
 
+@route('/config')
+@route('/config', method='POST')
+def config(db):
+    # Form update
+    update = False
+    if request.POST.get('config') != None:
+        update = True
+        # Update booleans:
+        for setting in ('fillGraph', 'animatedZooms', 'showRangeSelector'):
+            value = "" if request.POST.get(setting) == None else "true"
+            db.execute("UPDATE config SET value=? WHERE setting=?", (value, setting))
+        for setting in ('s0type', 's1type', 's2type', 's3type',
+                        's0impulses', 's1impulses', 's2impulses', 's3impulses',
+                        's0unit', 's1unit', 's2unit', 's3unit',
+                        's0combined', 's1combined', 's2combined', 's3combined'):
+            value = request.POST.get(setting)
+            db.execute("UPDATE config SET value=? WHERE setting=?", (value, setting))
+
+    # Get config from database
+    config={}
+    db_result = db.execute("SELECT * FROM config").fetchall()
+    for row in db_result:
+        config[row['setting']] = row['value']
+    return template('tpl_config', load_graph=False, config=config, update=update)
+
 @route('/static/<filename>')
 def static_serve(filename):
     return static_file(filename, root='./static')

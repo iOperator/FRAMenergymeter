@@ -14,8 +14,10 @@
 <div id="content">
 <div id="header"><a href="/"><span class="title">FRAMenergymeter</span></a>
 <ul id="navbar">
+  <li><a href="/">Home</a></li>
   <li><a href="/power">Power</a></li>
   <li><a href="/energy">Energy</a></li>
   <li><a href="/update">Update</a></li>
+  <li><a href="/config">Configuration</a></li>
 </ul>
 <hr></div>
