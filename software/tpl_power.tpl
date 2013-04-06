@@ -25,7 +25,7 @@
     %timediff = datum_difference(last_datum, datum[1])
     %last_datum = datum[1]
     %if timediff == 0:
-      %power = 1
+      %power = 0
     %else:
       %power = 1 / float(timediff)
     %end
