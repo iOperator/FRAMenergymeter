@@ -1,12 +1,6 @@
 %include: tpl_header title='Power', load_graph=load_graph
 %from basestation_lib import *
 <h2>Power report</h2>
-%# Get data from database
-%db_results = db.execute("SELECT id, datum, sensor FROM data").fetchall()
-%data = []
-%for row in db_results:
-  %data.append([row[0], row[1], row[2]])
-%end
 %if data == []:
 <p>Database is empty.</p>
 %else:
@@ -31,7 +25,11 @@
     %end
   + "{{dstr}},{{power}}\n"
   %end
-  , { fillGraph: true }  // fillGraph: true, animatedZooms: true, showRangeSelector: true
+  , {
+    {{"fillGraph: true, " if config['fillGraph'] == 'true' else ""}}
+    {{"animatedZooms: true, " if config['animatedZooms'] == 'true' else ""}}
+    {{"showRangeSelector: true, " if config['showRangeSelector'] == 'true' else ""}}
+  }
   );
 </script>
 %end

@@ -32,11 +32,31 @@ def index(db):
 
 @route('/energy')
 def energy(db):
-    return template('tpl_energy', load_graph=True, db=db)
+    # Get configuration from database
+    config={}
+    db_result = db.execute("SELECT * FROM config").fetchall()
+    for row in db_result:
+        config[row['setting']] = row['value']
+    # Get samples from database
+    data = []
+    db_result = db.execute("SELECT * FROM data").fetchall()
+    for row in db_result:
+        data.append((row['id'], row['datum'], row['sensor']))
+    return template('tpl_energy', load_graph=True, data=data, config=config)
 
 @route('/power')
 def power(db):
-    return template('tpl_power', load_graph=True, db=db)
+    # Get configuration from database
+    config={}
+    db_result = db.execute("SELECT * FROM config").fetchall()
+    for row in db_result:
+        config[row['setting']] = row['value']
+    # Get samples from database
+    data = []
+    db_result = db.execute("SELECT * FROM data").fetchall()
+    for row in db_result:
+        data.append((row['id'], row['datum'], row['sensor']))
+    return template('tpl_power', load_graph=True, data=data, config=config)
 
 @route('/update')
 @route('/update', method='POST')
@@ -62,7 +82,7 @@ def config(db):
             value = request.POST.get(setting)
             db.execute("UPDATE config SET value=? WHERE setting=?", (value, setting))
 
-    # Get config from database
+    # Get configuration from database
     config={}
     db_result = db.execute("SELECT * FROM config").fetchall()
     for row in db_result:
